@@ -1,0 +1,685 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ChevronRight, ChevronLeft, Droplets, Award, Heart, ShieldCheck, MapPin, Phone, Facebook, Instagram, Maximize2, ZoomIn, ArrowRight, ImagePlus, PlayCircle, Sparkles, Utensils, RefreshCw } from 'lucide-react';
+
+// Mock Data สำหรับสายพันธุ์ปลา
+const breeds = [
+  {
+    id: 1,
+    name: "Oranda Rose Tail",
+    desc: "ราชินีแห่งตู้ปลา หางพริ้วไหวประดุจดอกกุหลาบ",
+    color: "bg-gradient-to-br from-[#FF0033] to-orange-400",
+    tag: "Best Seller"
+  },
+  {
+    id: 2,
+    name: "Ranchu Black Cow",
+    desc: "สิงห์ดำตามหายาก รูปทรงกระสุน ผิวเนียนดุจกำมะหยี่",
+    color: "bg-gradient-to-br from-gray-800 to-black",
+    tag: "Premium"
+  },
+  {
+    id: 3,
+    name: "Ryukin Short Body",
+    desc: "โหนกสูง ลำตัวสั้น กระชับ แข็งแรงและปราดเปรียว",
+    color: "bg-gradient-to-br from-[#FF0033] to-[#99001F]",
+    tag: "Rare"
+  },
+  {
+    id: 4,
+    name: "Tosakin",
+    desc: "หางบานเป็นรูปพัด ความงามแบบดั้งเดิมจากญี่ปุ่น",
+    color: "bg-gradient-to-br from-[#CCFFFF] to-blue-400",
+    tag: "Classic"
+  }
+];
+
+// Mock Data สำหรับฟีเจอร์ (Tech Specs)
+const features = [
+  {
+    icon: <Droplets size={32} />,
+    title: "Bio-Secure Water",
+    desc: "ระบบน้ำหมุนเวียนมาตรฐานฟาร์มปิด ปลอดเชื้อ 100%"
+  },
+  {
+    icon: <Award size={32} />,
+    title: "Top Genetics",
+    desc: "สายเลือดแชมป์ นำเข้าพ่อแม่พันธุ์จากญี่ปุ่นและจีน"
+  },
+  {
+    icon: <ShieldCheck size={32} />,
+    title: "Health Guarantee",
+    desc: "รับประกันสุขภาพปลา 7 วัน พร้อมทีมสัตวแพทย์ดูแล"
+  }
+];
+
+// รูปภาพ Ryukin
+const ryukinImages = [
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/592885319_1394058062126945_4570985227437296937_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_ohc=NYwgt4DBJB0Q7kNvwHrCFCa&_nc_oc=AdlOpmzERHQ0Ge-O_B43dkLaCKNr3BponEK5piyiPcxB_NTQAZ-UJFq-QHP-X56q0sk&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=Sz0G15FPR5kXYUl0Hk8dWg&oh=00_AfiKgXtMjmDTB3q_qT2_g42sVt1G2a9kRtudSMnk6yI0ng&oe=6931DC47",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/593577535_1394058982126853_7768510330620331711_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_ohc=ZPXHGpyTt6UQ7kNvwHQEe_n&_nc_oc=AdlTm1u_zGpsrv16735ICoKzoHIafGJXo6MWv6JqPhOk42MwfTxsYm9qYBJAfXyXu7w&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=mqsXc3oyuFCXBf7q2pEXdA&oh=00_AfiJzlzeMeP_0HuRSv4Sc4TMKo4kBBWUDcJeMVeVgtHxIA&oe=6931C9F4",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591477775_1394058818793536_62727902343758012_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_ohc=boNXYfLyaekQ7kNvwHd09XB&_nc_oc=AdnB0gdKQrdZcvGoF1VuOgf_nnJCcOBElAKOx6J75_ZV5H6lV_Pu01KUNJZxigArLgY&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=CQzCp1tBEOwGxCqBZ_fNNg&oh=00_AfjGTXMs2N5s6xYtHHxtQNm8e8FlAvgmKAMJzUb1uQCrcg&oe=6931CA7B",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591708924_1394058345460250_6909665661873901997_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_ohc=FNOvLF3_JOEQ7kNvwHubOJQ&_nc_oc=AdmVu6hc4FU9srLxBsHdYRB149_y1cTKZd3VFc_sf6MpLjhckZa908mwKH8Zyyu_yeg&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=2tnj1M4NBs1m3s-MnbP4aQ&oh=00_Afj6gQO33MG4k87H5qq880FHEdSjDW2YfaRHwu37fK_QtA&oe=6931B7B3",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591623418_1394057152127036_829669313236932299_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=a4xocEk9fWcQ7kNvwHsh05V&_nc_oc=Adm74VDdjiEijFIalPsYW9i4bG8jJtY7mc1ftlt8Rb6NfZCHxWhOImURNvL2wXuyInk&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=ZhA2BwqnZU6buqKIJfC1hA&oh=00_Afh0dzKIoewPa6QDJJ4gPGJxvmNu_Kd6JZnFjmbusnpNCg&oe=6931C554",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591585502_1394059132126838_4470260783440729219_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_ohc=udZysxG1PrEQ7kNvwEWGqVe&_nc_oc=AdkWNvfHZ9eC0ZbrLYz23eo8_BdNtuly09gCRhYneerHrsZKeyfNxttodqH8aIpV6yY&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=v_-72kLEHDIcz5N6hkl4PA&oh=00_Afhr7k49oA1dxcA1YJshslr-eNnBKIHJk_kyIWX-TKP23g&oe=6931B827",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591171581_1394058898793528_2829847633358829392_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_ohc=H5HfOz2M1e8Q7kNvwEgD4v5&_nc_oc=AdnPJa9u6xjrUZU2OdfF2RBYcnDoAOioVtTjoXGYLgnEWdPaKlWxhXW50gjTCSu3z_o&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=Pq0FG404Zz194mHqygqgmw&oh=00_AfhGfWcCPCg8ntH77wnvP3pkEYKh7yVjAwjKooQTdjgc3Q&oe=6931C720",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/593301541_1394059002126851_7285098589173686292_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=7FASAn7ZiZcQ7kNvwGqR5ef&_nc_oc=AdkrgFCck0-eLUuTdR1Yz2qFyC-syAb4tKQ9IYhqpf7Yc4Y_f8xSiTaCemAJ1RJjqmY&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=O2-YQC3DjtHp0YUJH18L8g&oh=00_Afj1NRk0nWNeV75QmBHLsF378dJ0MzrWQCJ14XlsrpT8Xg&oe=6931D752",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/590783282_1394058252126926_8900762317093456592_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=IytlkMdSjHkQ7kNvwFWDUtl&_nc_oc=AdnIJ7TogazAgtlpx28yTt06iEteyNbi8Ihbpq880xkh_uLKBK3bc4iUPbzLx6BeNJQ&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=hDtkjiGxQkvY7ZupmpGEFA&oh=00_AfgJsWx6kQBAcjmOZI7RyNSXZpW-_Ri_GDdaoi_3WI6hTg&oe=6931C81F",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591715479_1394055792127172_3071146331796457578_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_ohc=96dP3olhwboQ7kNvwH4_JKw&_nc_oc=Adnytxyw-zORZOm1GTOcV2CHigU2O03SNalSQbC5-ZdYEMAJ8OcBE7BeIGYlt0ONGXo&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=YVBEhZcOSuPaU1uUUQsSHg&oh=00_Afi6DI56OWNXIFsLbgVnxN008XkVUE6ANcTDt65A_j6c-Q&oe=6931CBAB",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591432049_1394054168794001_893658217208488711_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_ohc=GjLRKQPP0bIQ7kNvwHhOAAs&_nc_oc=AdmGKmlB3C5pHBXsWqFQ_SgyAvZbrydav6AfAVGQHYe7BPbp0fu-8IbxFyN7EadzeJ8&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=Zf5__3O-KPQAS40ZrmxdOA&oh=00_Afjk2JPhk-jqyS1bQR-8OSrRmNiBBbGO1isN11hjMYPX_g&oe=6931BD7F",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591973592_1394058828793535_6441574399775648339_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=109&ccb=1-7&_nc_sid=833d8c&_nc_ohc=qHquHzRljRcQ7kNvwF3j7iX&_nc_oc=AdluOQykvHtFDr3ySw_3EE8s3xx4IkYTZ6eE0ZIThQFC6xub6lh2E7gsU3C64D-Tvt4&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=abFYsx5oz9Su5DzIAzBWTA&oh=00_AfjohLrpLg1lLsehr6L8ykpNOhHTGpTNFwNTXP-Q4Xf2_Q&oe=6931C8BB",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591252727_1394058072126944_4184576604188321127_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=t_YIEMDPuyUQ7kNvwE8tyML&_nc_oc=AdlDyWjP3K3gssvmHFawsDgqXqfVnEyilOL3uy45uqwAtMtzBEA4oOYm-Bcvmtczgs8&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=3j1jGlFvYXjJSItaACQetg&oh=00_AfgIUDQjunOONqvkw2aDfyZ3lt8c2f_kGfGYqyTb0ISDpA&oe=6931B88F",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/592325055_1394054885460596_5271371648306327542_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_ohc=Bu7oBxT5hGAQ7kNvwEis0Ah&_nc_oc=Adkz6zOrQt0oFpu9P0XGxt9cjhYm3ZspNxUjTYFnXXjNnm_IaLg3W-sScrzx3URXnqA&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=Skx3KzDvvjwG983ToNTpEA&oh=00_AfiIwHJJlFFrDGskoMExkQ1pohg3Rl1qvY5mHgLjfXJXvA&oe=6931B4B2"
+];
+
+// รูปภาพ Oranda
+const orandaImages = [
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/592250711_1394055265460558_9194356504843377106_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_ohc=1VfALuPQpocQ7kNvwExYEFv&_nc_oc=AdksQWQM9j5QuXOh9ww8j48v_cnMx8VdssTblGIrK7LIEiNpqBx9uiJfAZ4-5F9z7SA&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=Go2mM5IySwoP_VZMZ9zxAw&oh=00_Afjl-gd5xbJ8MS_hOSO3m5AkwIW42BJbWCgZspqdVlgahw&oe=6931B49C",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/589549062_1394058128793605_7629836512344185724_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_ohc=CwNWlYsKzXsQ7kNvwHXvRWh&_nc_oc=AdlyHNtjO2OHMRqSAwewiBSdPKdWIJtXGp-N4SHiPdDgYvvSalSGIvIJm7pIdrQo5Hs&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=oIfKf4wBmQq-T8mVTxl3SQ&oh=00_AfirGrBlPDFpyed1xvJBhbOa9FORbyO23UkvPrwFT7S0iQ&oe=6931CBDB",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/588829212_1394059125460172_5283697108144765342_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=ZN31L1w42c4Q7kNvwFJBMO2&_nc_oc=AdmL1CN6Vr7kqJVHpvDbc-deNHHsU187A-nC2HxtzCpINQLFYd9rfE8V2wSrDLLSp6M&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=ZzMGy3Lq7wdNBhigdE6n1w&oh=00_Afh9YR3teSX1cg0TFBKhl9KIfwyllkxqtV5799oJHC3XkQ&oe=6931E3D7",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591079603_1394054495460635_1510532877418529362_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_ohc=RiONao5G_4sQ7kNvwE4sFgo&_nc_oc=AdmvdjuCej6kUOy9e9hguHMTyI1jMIQAPW0QdBaf9C4MKgqFnVeFK_d6gDF5fpax1ug&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=HR4IskYPvmW1aBFoXuiWAw&oh=00_AfiB964HRo-aTZF0i-c2t10EZsqxcgT2-9EcleNik2nYaA&oe=6931DE00",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/592038962_1394056598793758_6153425645626707654_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_ohc=3x0sARi3kW8Q7kNvwFIGN6t&_nc_oc=Adk9AGR0QmNrbsli7_2mGHgpjQBG7sGvqVSkHGAuoYqozii0kfsntglUehcfyU7aa78&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=-hp6bEsN3PxPlEStrg5Tyw&oh=00_AfhIxGwg6wzUiO1XwZyZX0iSGAM3LNL15wZT7YfsEwye2g&oe=6931C174",
+    "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/590407314_1394055455460539_5724615788425948907_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_ohc=uk3U_a_PtSIQ7kNvwEK-FnS&_nc_oc=AdlFFDWV9fqThWk_bbXWP-fcSYhXnr1GKr80x7jQEsiFXEgcpoHFZElmXhhdgNkXoUU&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=gWWjeYPs3oXavVDGEqfT0A&oh=00_AfiWgfkzyNaV7gb0npwLbU-7PXjPIEJSCUJUdYHO1ywY8g&oe=6931C90F"
+];
+
+// Updated 8 Videos with Embed URLs
+const videoData = [
+    { id: 1, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F1580241053157316&show_text=false&width=500&t=0", title: "Live Action 1" },
+    { id: 2, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F1212639054117647&show_text=false&width=500&t=0", title: "Live Action 2" },
+    { id: 3, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F1920285078889567&show_text=false&width=500&t=0", title: "Live Action 3" },
+    { id: 4, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F3808465776121347&show_text=false&width=500&t=0", title: "Live Action 4" },
+    { id: 5, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F1181261120121245&show_text=false&width=500&t=0", title: "Live Action 5" },
+    { id: 6, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F1377884287053671&show_text=false&width=500&t=0", title: "Live Action 6" },
+    { id: 7, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F2289795524815078&show_text=false&width=500&t=0", title: "Live Action 7" },
+    { id: 8, url: "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2F100045682941037%2Fvideos%2Fpcb.1394057455460339%2F2476666436064508&show_text=false&width=500&t=0", title: "Live Action 8" }
+];
+
+// Lightbox Component
+const Lightbox = ({ isOpen, image, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div 
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-fade-in"
+            onClick={onClose}
+        >
+            <div className="relative max-w-6xl max-h-[95vh] w-full flex items-center justify-center">
+                <button 
+                    className="absolute -top-12 right-0 md:top-4 md:right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-all"
+                    onClick={onClose}
+                >
+                    <X size={28} />
+                </button>
+                <img 
+                    src={image} 
+                    alt="Full View" 
+                    className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 animate-scale-up"
+                    onClick={(e) => e.stopPropagation()} 
+                />
+            </div>
+        </div>
+    );
+};
+
+// GalleryCard Component
+const GalleryCard = ({ title, subtitle, tag, description, images, color = "bg-gray-900" }) => {
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const scrollContainerRef = useRef(null);
+
+    const openLightbox = (img) => {
+        setSelectedImage(img);
+        setLightboxOpen(true);
+    };
+
+    const hasImages = images && images.length > 0;
+
+    return (
+        <>
+            <div className={`group relative h-[600px] ${color} rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100/10`}>
+                
+                {hasImages ? (
+                    <div 
+                        ref={scrollContainerRef}
+                        className="flex overflow-x-auto snap-x snap-mandatory h-full w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] scroll-smooth pb-20"
+                    >
+                        {images.map((img, index) => (
+                            <div 
+                                key={index} 
+                                className="min-w-full h-full snap-center relative flex-shrink-0 cursor-pointer overflow-hidden"
+                                onClick={() => openLightbox(img)}
+                            >
+                                <img 
+                                    src={img} 
+                                    alt={`${title} ${index + 1}`} 
+                                    className="w-full h-full object-cover transition-transform duration-700 ease-out hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60 pointer-events-none"></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-200/50">
+                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-gray-300 mb-4 animate-pulse">
+                            <ImagePlus size={48} />
+                        </div>
+                        <p className="text-gray-400 font-medium">Coming Soon</p>
+                        <p className="text-gray-300 text-sm">เตรียมพบกับภาพชุดใหม่เร็วๆ นี้</p>
+                    </div>
+                )}
+
+                {hasImages && (
+                    <div className="absolute top-6 right-6 z-10 pointer-events-none">
+                        <span className="bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 border border-white/20 shadow-lg animate-pulse-slow">
+                            <ZoomIn size={14} /> Tap to Expand
+                        </span>
+                    </div>
+                )}
+
+                <div className="absolute bottom-6 left-6 right-6 z-20 pointer-events-none">
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl shadow-2xl text-white transform transition-all duration-300 group-hover:bg-black/40">
+                        <div className="flex justify-between items-start mb-3">
+                            <span className={`text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm ${title.includes("Ryukin") ? 'bg-[#FF0033]' : 'bg-orange-500'}`}>
+                                {tag}
+                            </span>
+                            
+                            {hasImages && (
+                                <div className="flex items-center gap-2 opacity-70">
+                                    <span className="text-[10px] font-medium tracking-widest uppercase">Slide</span>
+                                    <ArrowRight size={14} className="animate-bounce-x" />
+                                </div>
+                            )}
+                        </div>
+                        
+                        <h4 className="text-3xl font-bold mb-2 tracking-tight drop-shadow-lg">{title}</h4>
+                        <p className="text-white/80 text-sm line-clamp-2 leading-relaxed">
+                            {description}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <Lightbox 
+                isOpen={lightboxOpen} 
+                image={selectedImage} 
+                onClose={() => setLightboxOpen(false)} 
+            />
+        </>
+    );
+};
+
+// Care Tips Component
+const CareTips = () => {
+  return (
+    <section className="py-24 bg-[#FAFAFA] relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-100/30 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="text-center mb-16">
+           <h2 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Tips & Secrets</h2>
+           <p className="text-gray-500 text-lg">เคล็ดลับการเลี้ยงปลาให้สวยและสุขภาพดีแบบมืออาชีพ</p>
+        </div>
+
+        <div className="flex flex-col gap-12">
+           {/* Tip 1: Water (Image Left, Content Right) */}
+           <div className="bg-white rounded-[2.5rem] p-8 shadow-lg border border-gray-100 flex flex-col md:flex-row gap-8 items-center group hover:shadow-xl transition-all duration-300">
+              <div className="w-full md:w-1/2 h-64 bg-blue-50 rounded-3xl flex items-center justify-center relative overflow-hidden border-4 border-white shadow-sm">
+                  {/* Image Placeholder Replaced with Actual Image */}
+                  <img 
+                      src="https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591719271_1394107725455312_7710963864460969609_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=FB2aEdoo1EsQ7kNvwEAfpAD&_nc_oc=AdlmHY7XAAMjqKwYA6FYy-uEvKX_YnPe697r0RS6xcD8uO-uGF2pTcXiZ1xdjiPAdvo&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=qZACoLDkv2SFyL0kQOi7fw&oh=00_AfhZD8aRE6SlHkaB2xkveQtBDRQ5AafNYPPp2j6q7077iA&oe=6931E332" 
+                      alt="Water Quality" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+              </div>
+              <div className="w-full md:w-1/2">
+                  <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 mb-4">
+                     <Droplets size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Water Quality</h3>
+                  <h4 className="text-blue-500 font-semibold mb-4 text-sm uppercase tracking-wider">คุณภาพน้ำคือหัวใจ</h4>
+                  <p className="text-gray-500 leading-relaxed">
+                    ดูแลรักษาคุณภาพน้ำให้ดีตลอดเวลา ผ่านระบบกรองที่มีประสิทธิภาพ (Smart Filter) เพื่อให้น้ำใสสะอาด ลดของเสีย และมีค่า pH ที่เหมาะสมต่อการเจริญเติบโต การหมั่นตรวจสอบค่าน้ำและเปลี่ยนถ่ายน้ำอย่างสม่ำเสมอจะช่วยให้ปลาสดชื่นและแข็งแรง
+                  </p>
+              </div>
+           </div>
+
+           {/* Tip 2: Food (Image Right, Content Left - ZigZag) */}
+           <div className="bg-white rounded-[2.5rem] p-8 shadow-lg border border-gray-100 flex flex-col md:flex-row gap-8 items-center group hover:shadow-xl transition-all duration-300">
+              <div className="w-full md:w-1/2 h-64 bg-orange-50 rounded-3xl flex items-center justify-center relative overflow-hidden border-4 border-white shadow-sm md:order-2"> 
+                  <img 
+                      src="https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591954443_1394107458788672_2121439667482809578_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=5q4q9DOy-SAQ7kNvwEouLmD&_nc_oc=Adk1tx1MgW8sib-OV0PoUoUsjhlPYPrD1xEf8zRkfpnVqLLpKaAHQliiRaGQnb8Wb8U&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=XLHFKatR9fqFaa3fTonHbw&oh=00_AfgeLbCFaeXyD5P0zsuC4ViIUjlijmGTq-QSJKdQOasuYw&oe=6931D90F" 
+                      alt="Perfect Nutrition" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+              </div>
+              <div className="w-full md:w-1/2 md:order-1">
+                  <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 mb-4">
+                     <Utensils size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Perfect Nutrition</h3>
+                  <h4 className="text-orange-500 font-semibold mb-4 text-sm uppercase tracking-wider">อาหารที่เหมาะสม</h4>
+                  <p className="text-gray-500 leading-relaxed">
+                    เลือกอาหารคุณภาพสูงที่เหมาะกับช่วงวัยและขนาดของปลา เพื่อเร่งสีสันและเสริมสร้างโครงสร้างที่สวยงาม โดยไม่ทำให้น้ำเน่าเสีย การให้อาหารในปริมาณที่พอเหมาะและตรงเวลาจะช่วยให้ปลาเจริญเติบโตได้อย่างเต็มที่
+                  </p>
+              </div>
+           </div>
+
+           {/* Tip 3: Ecosystem (Image Left, Content Right) */}
+           <div className="bg-white rounded-[2.5rem] p-8 shadow-lg border border-gray-100 flex flex-col md:flex-row gap-8 items-center group hover:shadow-xl transition-all duration-300">
+              <div className="w-full md:w-1/2 h-64 bg-green-50 rounded-3xl flex items-center justify-center relative overflow-hidden border-4 border-white shadow-sm">
+                  <img 
+                      src="https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591711120_1394054202127331_2194839482278541456_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=kC0X9ueykmkQ7kNvwFD0Kcj&_nc_oc=Adlh6UvlI0Coj4950u2khBYC4MFYytwzDC35SJVT_kJQndanXdNYPMr-VkjU0iw_eGM&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=kDSH-d6sAoYg11oR2YXSQA&oh=00_AfgfMPKSevDNsimeDyHnRRM40hJvFl_zppq2s9eqBpYa6w&oe=6931E097" 
+                      alt="Bio-Ecosystem" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+              </div>
+              <div className="w-full md:w-1/2">
+                  <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-600 mb-4">
+                     <RefreshCw size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Bio-Ecosystem</h3>
+                  <h4 className="text-green-500 font-semibold mb-4 text-sm uppercase tracking-wider">ความสะอาด & จุลินทรีย์</h4>
+                  <p className="text-gray-500 leading-relaxed">
+                    หมั่นทำความสะอาดบ่อเลี้ยงและเติมจุลินทรีย์ (Bio-Bacteria) เพื่อช่วยย่อยสลายของเสียและสร้างระบบนิเวศจำลองที่สมดุลสำหรับการเลี้ยงปลา การรักษาสมดุลของจุลินทรีย์ที่ดีในระบบกรองจะช่วยลดการเกิดโรค
+                  </p>
+              </div>
+           </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ... existing components (Navbar, Hero, About, BentoGrid, BreedShowcase, Footer, App) ...
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-4' : 'bg-white/50 backdrop-blur-sm py-6'}`}>
+      <div className="container mx-auto px-6 flex justify-center md:justify-between items-center relative">
+        <div className="hidden md:flex space-x-8 text-sm font-medium text-gray-600 mx-auto">
+          <a href="#home" className="hover:text-[#FF0033] transition-colors hover:scale-105 transform">หน้าแรก</a>
+          <a href="#about" className="hover:text-[#FF0033] transition-colors hover:scale-105 transform">ประวัติฟาร์ม</a>
+          <a href="#features" className="hover:text-[#FF0033] transition-colors hover:scale-105 transform">ความโดดเด่น</a>
+          <a href="#breeds" className="hover:text-[#FF0033] transition-colors hover:scale-105 transform">สายพันธุ์</a>
+          <a href="#contact" className="hover:text-[#FF0033] transition-colors hover:scale-105 transform">ติดต่อเรา</a>
+        </div>
+
+        <button className="md:hidden text-gray-900 absolute right-6" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col space-y-4">
+          <a href="#home" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-600">หน้าแรก</a>
+          <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-600">ประวัติฟาร์ม</a>
+          <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-600">ความโดดเด่น</a>
+          <a href="#breeds" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-600">สายพันธุ์</a>
+          <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-600">ติดต่อเรา</a>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+const Hero = () => {
+  return (
+    <section id="home" className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-[#FFFFFF] py-20">
+      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#CCFFFF] rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+      <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-[#FF0033]/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-[-10%] right-[20%] w-[400px] h-[400px] bg-[#CCFFFF]/50 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+
+      <div className="container mx-auto px-4 md:px-6 text-center z-10 flex flex-col items-center justify-center">
+        <div className="mb-6 md:mb-8 relative animate-fade-in-up">
+             <div className="absolute inset-0 bg-gradient-to-r from-[#66FFFF] to-[#FF0033] rounded-full blur-xl opacity-60 animate-pulse"></div>
+             <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-[#CCFFFF] via-[#FFFFFF] to-[#FF0033] opacity-70 animate-spin-slow blur-sm"></div>
+             
+             <img 
+                src="https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/592140775_1394054115460673_5992992744759027376_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_ohc=if1lo4PwTxcQ7kNvwHyASwS&_nc_oc=Adk0pOUDuWiz5ALvcTaFhVBPYF9se7eiSpfObIQI0uETTVUPM1jJLmNS3f-TxG1Ls8g&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=QeWFB3QSvBM_Nep3fc_APg&oh=00_Afj7SgXFJJpE9HKUCRzjWECLb7YG2T4VycIZzcSflUYT9w&oe=6931D25D" 
+                alt="Big Boss Farm Logo" 
+                className="w-32 h-32 md:w-44 md:h-44 rounded-full object-cover border-[6px] border-white shadow-2xl relative z-10 hover:scale-105 transition-transform duration-500 ease-out cursor-pointer"
+            />
+        </div>
+
+        <h2 className="text-[#FF0033] font-medium tracking-widest text-sm mb-4 uppercase animate-fade-in-up delay-100">The Premium Goldfish</h2>
+        
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-fade-in-up delay-200 flex flex-col items-center leading-tight">
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-red-400 to-[#FF0033] drop-shadow-md">
+            BIG BOSS
+          </span>
+          <span className="block text-gray-900 mt-2 md:mt-4">
+            FARM
+          </span>
+        </h1>
+        
+        <p className="text-lg md:text-2xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-300">
+          ที่สุดแห่งความงามใต้น้ำ ผสานเทคโนโลยีการเลี้ยงดูระดับสูง <br/> เพื่อสุขภาพและโครงสร้างที่สมบูรณ์แบบ
+        </p>
+        <div className="flex flex-col md:flex-row gap-4 justify-center animate-fade-in-up delay-300">
+          <button className="px-8 py-3 bg-gradient-to-r from-[#FF0033] to-[#D9002A] text-white rounded-full font-medium hover:scale-105 transition-transform duration-300 flex items-center justify-center gap-2 shadow-lg shadow-red-200">
+            ชมคอลเลกชัน <ChevronRight size={18} />
+          </button>
+          <button className="px-8 py-3 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-[#CCFFFF]/30 hover:scale-105 transition-transform duration-300">
+            ติดต่อสอบถาม
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const About = () => {
+  return (
+    <section id="about" className="py-24 bg-white">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#CCFFFF] to-[#FF0033]/20 rounded-3xl transform rotate-3 group-hover:rotate-2 transition-transform duration-500"></div>
+            <div className="relative bg-white rounded-3xl h-[500px] overflow-hidden flex items-center justify-center shadow-lg border border-[#CCFFFF] bg-black">
+               <img 
+                  src="https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591182792_1394058915460193_5907477707464327380_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=Tx3gQHdyvGUQ7kNvwFaBAlI&_nc_oc=AdktOwYITQ_m09VvaJpyVlHrLtZYZRy_kfeRTH0H35xrxNrwicr9WkuvGrYeKfy3obE&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=1RmesvUjQJabNc06aUvNGw&oh=00_AfiXJma9bMGkLnLZ1RDOO21yhiWiusGU60o8v24KTRcUWw&oe=6931E56B" 
+                  alt="Big Boss Farm Atmosphere" 
+                  className="w-full h-full object-cover"
+                />
+            </div>
+          </div>
+          <div>
+            <h3 className="text-4xl font-bold text-gray-900 mb-6">จุดเริ่มต้นของ <br/>ความสมบูรณ์แบบ</h3>
+            <p className="text-gray-600 text-lg leading-relaxed mb-6">
+              จากความหลงใหลในความสง่างามของปลาทอง สู่การก่อตั้ง <strong>BIG BOSS FARM</strong> เรามุ่งมั่นพัฒนาสายพันธุ์ด้วยความรักและวิทยาศาสตร์
+            </p>
+            <p className="text-gray-600 text-lg leading-relaxed mb-8">
+              เราไม่ใช่แค่ฟาร์มปลา แต่เราคือสตูดิโอที่สร้างสรรค์งานศิลปะที่มีชีวิต ทุกตัวผ่านการคัดเลือกอย่างพิถีพิถัน เพื่อให้แน่ใจว่าคุณจะได้รับ "บอส" ตัวจริงไปดูแล
+            </p>
+            <div className="flex gap-8">
+                <div className="text-center">
+                    <span className="block text-3xl font-bold text-[#FF0033]">10+</span>
+                    <span className="text-sm text-gray-500">Years Experience</span>
+                </div>
+                <div className="text-center">
+                    <span className="block text-3xl font-bold text-gray-900">5k+</span>
+                    <span className="text-sm text-gray-500">Happy Customers</span>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const BentoGrid = () => {
+  return (
+    <section id="features" className="py-24 bg-[#FAFAFA]">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">นวัตกรรม & ความใส่ใจ</h2>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            มาตรฐานใหม่ของการเลี้ยงปลาทอง ผสานธรรมชาติเข้ากับเทคโนโลยี
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
+          <div className="md:col-span-2 md:row-span-2 bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl transition-shadow duration-300 relative overflow-hidden group border border-[#CCFFFF]">
+            <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:opacity-30 transition-opacity">
+                <Droplets size={200} className="text-[#CCFFFF]" />
+            </div>
+            <div className="relative z-10 h-full flex flex-col justify-between">
+              <div>
+                <span className="text-[#FF0033] font-semibold mb-2 block">Premium Water System</span>
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">ระบบน้ำ Smart Flow</h3>
+                <p className="text-gray-500 text-lg max-w-md">
+                  จำลองระบบนิเวศธรรมชาติด้วยเทคโนโลยีการกรอง 5 ขั้นตอน ทำให้น้ำใสสะอาด ลดความเครียด และเร่งสีสันของปลาให้สดใสโดยธรรมชาติ
+                </p>
+              </div>
+              <div className="w-full bg-[#CCFFFF]/20 h-48 rounded-2xl mt-8 flex items-center justify-center text-gray-500 border border-[#CCFFFF]">
+                 [Smart Flow Diagram Illustration]
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow duration-300 border border-[#CCFFFF] flex flex-col justify-center">
+            <div className="w-12 h-12 bg-[#FF0033]/10 rounded-full flex items-center justify-center text-[#FF0033] mb-4">
+              <Award size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">สายเลือดแชมป์</h3>
+            <p className="text-sm text-gray-500">
+              คัดสรรพันธุกรรมจากฟาร์มประกวดระดับโลก เพื่อโครงสร้างที่สวยงามตามอุดมคติ
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-[#FF0033] to-[#D9002A] text-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white mb-4 backdrop-blur-sm">
+              <Heart size={24} />
+            </div>
+            <h3 className="text-xl font-bold mb-2">ดูแลด้วยใจ</h3>
+            <p className="text-sm text-white/90">
+              บริการหลังการขาย ปรึกษาปัญหาสุขภาพปลาฟรีตลอดชีพ
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const BreedShowcase = () => {
+  return (
+    <section id="breeds" className="py-24 bg-white overflow-hidden">
+      <div className="container mx-auto px-6">
+        <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Collection & Gallery</h2>
+        
+        <div className="mb-20">
+             <div className="flex items-center gap-4 mb-8">
+                <div className="h-10 w-2 bg-[#FF0033] rounded-full"></div>
+                <h3 className="text-2xl font-bold text-gray-800">Featured Collection (ภาพถ่าย)</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <GalleryCard 
+                    title="Oranda Rose Tail"
+                    tag="Best Seller"
+                    description="ราชินีแห่งตู้ปลา หางพริ้วไหวประดุจดอกกุหลาบ โดดเด่นด้วยวุ้นที่หัวและหางที่แผ่สยายสวยงาม"
+                    images={orandaImages}
+                    color="bg-gray-100"
+                />
+
+                <GalleryCard 
+                    title="Ryukin Short Body"
+                    tag="Rare Item"
+                    description="โหนกสูง ลำตัวสั้น กระชับ แข็งแรงและปราดเปรียว สวยงามทุกมุมมอง สมบูรณ์แบบตามตำรา"
+                    images={ryukinImages}
+                    color="bg-gray-900"
+                />
+            </div>
+        </div>
+
+        <div>
+            <div className="flex items-center gap-4 mb-8">
+                <div className="h-10 w-2 bg-[#66FFFF] rounded-full"></div>
+                <h3 className="text-2xl font-bold text-gray-800">Live Action (วิดีโอ)</h3>
+            </div>
+            
+            {/* Grid Layout for Videos */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {videoData.map((video, idx) => (
+                    <div 
+                        key={video.id}
+                        className="relative bg-black rounded-[2rem] overflow-hidden shadow-lg h-[300px] group border-4 border-white ring-1 ring-gray-100 transition-transform hover:scale-[1.02]"
+                    >
+                        <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
+                        
+                        <iframe 
+                            src={video.url}
+                            width="100%" 
+                            height="100%" 
+                            style={{border: "none", overflow: "hidden"}} 
+                            scrolling="no" 
+                            frameBorder="0" 
+                            allowFullScreen={true} 
+                            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                            className="w-full h-full object-cover"
+                            title={video.title}
+                        ></iframe>
+                        
+                        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none opacity-50 group-hover:opacity-0 transition-opacity">
+                             <PlayCircle size={64} className="text-white drop-shadow-lg" />
+                        </div>
+                        
+                        <div className="absolute top-4 left-4 z-20">
+                            <span className="bg-[#66FFFF]/90 text-gray-900 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1 shadow-sm">
+                                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div> Live {idx + 1}
+                            </span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Footer = () => {
+  return (
+    <footer id="contact" className="bg-gray-900 text-white py-16">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <div className="col-span-1 md:col-span-1">
+            <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+              BIG BOSS <span className="bg-[#FF0033] text-white text-xs px-2 py-1 rounded">FARM</span>
+            </h3>
+            <p className="text-gray-400 text-sm">
+              ฟาร์มปลาทองคุณภาพระดับพรีเมียม ใส่ใจทุกรายละเอียดเพื่อคนรักปลา
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-4 text-white">เมนู</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><a href="#" className="hover:text-[#FF0033] transition-colors">หน้าแรก</a></li>
+              <li><a href="#" className="hover:text-[#FF0033] transition-colors">ปลาทั้งหมด</a></li>
+              <li><a href="#" className="hover:text-[#FF0033] transition-colors">อุปกรณ์เลี้ยงปลา</a></li>
+              <li><a href="#" className="hover:text-[#FF0033] transition-colors">บทความ</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4 text-white">ช่วยเหลือ</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><a href="#" className="hover:text-[#FF0033] transition-colors">การจัดส่ง</a></li>
+              <li><a href="#" className="hover:text-[#FF0033] transition-colors">การรับประกัน</a></li>
+              <li><a href="#" className="hover:text-[#FF0033] transition-colors">วิธีการพักน้ำ</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-4 text-white">ติดต่อเรา</h4>
+            <ul className="space-y-3 text-sm text-gray-400">
+              <li className="flex items-center gap-2"><MapPin size={16} /> บางบัวทอง, นนทบุรี</li>
+              <li className="flex items-center gap-2"><Phone size={16} /> 089-XXX-XXXX</li>
+              <li className="flex gap-4 mt-4">
+                <a href="#" className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#FF0033] transition-colors"><Facebook size={16} /></a>
+                <a href="#" className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#FF0033] transition-colors"><Instagram size={16} /></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="border-t border-gray-800 pt-8 text-center text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center">
+          <p>&copy; 2024 Big Boss Farm. All rights reserved.</p>
+          <div className="flex gap-4 mt-4 md:mt-0">
+            <a href="#" className="hover:text-[#FF0033]">Privacy Policy</a>
+            <a href="#" className="hover:text-[#FF0033]">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+const App = () => {
+  return (
+    <div className="font-sans antialiased text-gray-900 bg-white selection:bg-blue-100 selection:text-blue-900">
+      <Navbar />
+      <Hero />
+      <About />
+      <BentoGrid />
+      <CareTips />
+      <BreedShowcase />
+      <Footer />
+      
+      {/* Global CSS for custom animations */}
+      <style jsx global>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+        }
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 10s linear infinite;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+        @keyframes scale-up {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale-up {
+            animation: scale-up 0.3s ease-out forwards;
+        }
+        @keyframes bounce-x {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(3px); }
+        }
+        .animate-bounce-x {
+            animation: bounce-x 1s infinite;
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        
+        .animate-pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default App;
