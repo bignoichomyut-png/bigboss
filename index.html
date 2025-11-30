@@ -29,6 +29,7 @@
                         "bounce-x": "bounce-x 1s infinite",
                         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
                         "scale-up": "scale-up 0.3s ease-out forwards",
+                        "ken-burns": "ken-burns 20s ease-in-out infinite alternate", // New Animation
                     },
                     keyframes: {
                         blob: {
@@ -52,6 +53,10 @@
                         "scale-up": {
                             "from": { transform: "scale(0.95)", opacity: "0" },
                             "to": { transform: "scale(1)", opacity: "1" },
+                        },
+                        "ken-burns": { // New Keyframe
+                            "0%": { transform: "scale(1.0) translate(0, 0)" },
+                            "100%": { transform: "scale(1.15) translate(-2%, -2%)" },
                         }
                     },
                     screens: {
@@ -100,7 +105,7 @@
                 <a href="#breeds" class="hover:text-[#FF0033] transition-colors hover:scale-105 transform">สายพันธุ์</a>
                 <a href="#showroom" class="hover:text-[#FF0033] transition-colors hover:scale-105 transform">โชว์รูม</a>
                 <a href="#knowledge" class="hover:text-[#FF0033] transition-colors hover:scale-105 transform">สาระน่ารู้</a>
-                <a href="#contact" class="hover:text-[#FF0033] transition-colors hover:scale-105 transform">ติดต่อเรา</a>
+                <a href="#contact-us" class="hover:text-[#FF0033] transition-colors hover:scale-105 transform">ติดต่อเรา</a>
             </div>
 
             <!-- Mobile Menu Button -->
@@ -118,7 +123,7 @@
             <a href="#breeds" class="mobile-link px-6 py-4 border-b border-gray-50 text-gray-600 hover:bg-gray-50 hover:text-[#FF0033]">สายพันธุ์</a>
             <a href="#showroom" class="mobile-link px-6 py-4 border-b border-gray-50 text-gray-600 hover:bg-gray-50 hover:text-[#FF0033]">โชว์รูม</a>
             <a href="#knowledge" class="mobile-link px-6 py-4 border-b border-gray-50 text-gray-600 hover:bg-gray-50 hover:text-[#FF0033]">สาระน่ารู้</a>
-            <a href="#contact" class="mobile-link px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-[#FF0033]">ติดต่อเรา</a>
+            <a href="#contact-us" class="mobile-link px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-[#FF0033]">ติดต่อเรา</a>
         </div>
     </nav>
 
@@ -159,7 +164,7 @@
                 <a href="#breeds" class="px-8 py-3 bg-gradient-to-r from-[#FF0033] to-[#D9002A] text-white rounded-full font-medium hover:scale-105 transition-transform duration-300 flex items-center justify-center gap-2 shadow-lg shadow-red-200 text-sm md:text-base w-full sm:w-auto">
                     ชมคอลเลกชัน <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </a>
-                <a href="#contact" class="px-8 py-3 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-[#CCFFFF]/30 hover:scale-105 transition-transform duration-300 text-sm md:text-base w-full sm:w-auto text-center">
+                <a href="#contact-us" class="px-8 py-3 bg-white text-gray-900 border border-gray-200 rounded-full font-medium hover:bg-[#CCFFFF]/30 hover:scale-105 transition-transform duration-300 text-sm md:text-base w-full sm:w-auto text-center">
                     ติดต่อสอบถาม
                 </a>
             </div>
@@ -586,6 +591,96 @@
         </div>
     </section>
 
+    <!-- New Contact Form Section -->
+    <section id="contact-us" class="relative py-24 overflow-hidden bg-black">
+        <!-- Animated Background Image -->
+        <div class="absolute inset-0 z-0">
+            <div class="w-full h-full animate-ken-burns">
+                <img 
+                    src="https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/541788209_1322380729294679_8592818948526015887_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=833d8c&_nc_ohc=AC6LPqvO8nUQ7kNvwFjjeKs&_nc_oc=AdmoOZ1UuOGCwK76UKpWitTHgWfEjmwmWfirmEk9xJaBHh8wLrxdVzMmTkdtFG_KlOg&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=fBdDJ8XxEPuncd4AbcN0IA&oh=00_AfiCp5HtAdyAt9v_2vDNBkEJa2S0XjVNXT3NilqtcH_4ZA&oe=6931F1A2" 
+                    alt="Contact Background" 
+                    class="w-full h-full object-cover opacity-60"
+                />
+            </div>
+            <!-- Gradient Overlay for readability -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        </div>
+
+        <div class="container relative z-10 mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    
+                    <!-- Left Side: Text -->
+                    <div class="text-white space-y-6">
+                        <h2 class="text-4xl md:text-5xl font-bold leading-tight">
+                            สนใจเป็นเจ้าของ <br/>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF0033] to-orange-500">Big Boss ตัวจริง?</span>
+                        </h2>
+                        <p class="text-gray-300 text-lg">
+                            กรอกข้อมูลเพื่อให้ทีมงานของเราติดต่อกลับ พร้อมรับคำปรึกษาและข้อเสนอสุดพิเศษสำหรับคนรักปลาทองโดยเฉพาะ
+                        </p>
+                        <div class="flex flex-col gap-4 mt-8">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-[#FF0033]">
+                                    <i data-lucide="phone" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">โทรสอบถาม</p>
+                                    <p class="font-bold text-lg">089-XXX-XXXX</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-[#66FFFF]">
+                                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">Line Official</p>
+                                    <p class="font-bold text-lg">@BigBossFarm</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Glassmorphism Form -->
+                    <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group hover:border-white/30 transition-all duration-300">
+                        <!-- Decorative glow -->
+                        <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#FF0033]/30 rounded-full blur-3xl pointer-events-none group-hover:bg-[#FF0033]/40 transition-colors"></div>
+                        
+                        <h3 class="text-2xl font-bold text-white mb-6">ติดต่อเรา</h3>
+                        <form class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">ชื่อ - นามสกุล</label>
+                                <input type="text" placeholder="ระบุชื่อของคุณ" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF0033] focus:ring-1 focus:ring-[#FF0033] transition-all">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">เบอร์โทรศัพท์</label>
+                                <input type="tel" placeholder="0xx-xxx-xxxx" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF0033] focus:ring-1 focus:ring-[#FF0033] transition-all">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">จังหวัด</label>
+                                <select class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-[#FF0033] focus:ring-1 focus:ring-[#FF0033] transition-all appearance-none cursor-pointer">
+                                    <option value="" disabled selected class="text-gray-500">เลือกจังหวัด</option>
+                                    <option value="bangkok" class="text-black">กรุงเทพมหานคร</option>
+                                    <option value="nonthaburi" class="text-black">นนทบุรี</option>
+                                    <option value="pathumthani" class="text-black">ปทุมธานี</option>
+                                    <option value="other" class="text-black">อื่นๆ</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="w-full py-4 mt-4 bg-gradient-to-r from-[#FF0033] to-[#D9002A] text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-red-600/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group">
+                                ส่งข้อมูลติดต่อ
+                                <i data-lucide="send" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer id="contact" class="bg-gray-950 text-white py-12 md:py-16 border-t border-gray-900">
         <div class="container mx-auto px-6">
@@ -897,7 +992,7 @@
             "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/591411371_1394056058793812_4090661909368804700_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=YMZOKwglrLQQ7kNvwEni2xb&_nc_oc=AdkaP4NIhHqBd43rBw61YyT4vorgQm7lG92MaNxAVCKSC6CEIqzmHVb2fDj-ZREw_l8&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=aSySO-XPhsjOMPLYmdImLQ&oh=00_AfindoAVeMShxiTtltgUPz4IQNfhGKrd4SpQeF2jwMIbIA&oe=6931FB70"
         ];
 
-        // Existing Ryukin data for the Gallery section
+        // Existing Ryukin data for the Gallery section (kept as is unless user wants to replace it too, but they said 'Add to Showroom')
         const ryukinImages = [
             "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/592885319_1394058062126945_4570985227437296937_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_ohc=NYwgt4DBJB0Q7kNvwHrCFCa&_nc_oc=AdlOpmzERHQ0Ge-O_B43dkLaCKNr3BponEK5piyiPcxB_NTQAZ-UJFq-QHP-X56q0sk&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=Sz0G15FPR5kXYUl0Hk8dWg&oh=00_AfiKgXtMjmDTB3q_qT2_g42sVt1G2a9kRtudSMnk6yI0ng&oe=6931DC47",
             "https://scontent.fbkk21-1.fna.fbcdn.net/v/t39.30808-6/593577535_1394058982126853_7768510330620331711_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_ohc=ZPXHGpyTt6UQ7kNvwHQEe_n&_nc_oc=AdlTm1u_zGpsrv16735ICoKzoHIafGJXo6MWv6JqPhOk42MwfTxsYm9qYBJAfXyXu7w&_nc_zt=23&_nc_ht=scontent.fbkk21-1.fna&_nc_gid=mqsXc3oyuFCXBf7q2pEXdA&oh=00_AfiJzlzeMeP_0HuRSv4Sc4TMKo4kBBWUDcJeMVeVgtHxIA&oe=6931C9F4",
